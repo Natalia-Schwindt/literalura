@@ -112,15 +112,22 @@ public class Principal {
         System.out.println("Ingrese el año que desea consultar:");
         try {
             var fecha = Integer.parseInt(lectura.nextLine());
+
+            if (fecha < 0 || fecha > 2025) {
+                System.out.println("Por favor, ingrese un año válido (entre 0 y 2025).");
+                return;
+            }
+
             List<Autor> autoresVivos = autorRepository.buscarAutoresVivosEnDeterminadaFecha(fecha);
 
             if (autoresVivos.isEmpty()) {
                 System.out.println("No se encontraron autores vivos en ese año.");
             } else {
+                System.out.println("---------- AUTORES VIVOS EN " + fecha + " ----------");
                 autoresVivos.forEach(System.out::println);
             }
         } catch (NumberFormatException e) {
-            System.out.println("Año no válido.");
+            System.out.println("Error: Debe ingresar un número entero para el año.");
         }
     }
 
