@@ -10,8 +10,8 @@ public class Libro {
     private Long id;
     @Column(unique = true)
     private String titulo;
-    @ManyToOne
-    @JoinColumn(name = "autor_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "autor_id", nullable = false)
     private Autor autor;
     private String idioma;
     private Double numeroDeDescargas;
