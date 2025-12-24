@@ -10,17 +10,19 @@ public class Libro {
     private Long id;
     @Column(unique = true)
     private String titulo;
-    private String autor;
+    @ManyToOne
+    @JoinColumn(name = "autor_id")
+    private Autor autor;
     private String idioma;
     private Double numeroDeDescargas;
 
     public Libro() {}
 
-    public Libro(DatosLibro datosLibro) {
+    public Libro(DatosLibro datosLibro, Autor autor) {
         this.titulo = datosLibro.titulo();
-        this.autor = datosLibro.autor().isEmpty() ? "Desconocido" : datosLibro.autor().get(0).nombre();
         this.idioma = datosLibro.idiomas().isEmpty() ? "Desconocido" : datosLibro.idiomas().get(0);
         this.numeroDeDescargas = datosLibro.numeroDeDescargas();
+        this.autor = autor;
     }
 
     @Override
@@ -49,11 +51,11 @@ public class Libro {
         this.titulo = titulo;
     }
 
-    public String getAutor() {
+    public Autor getAutor() {
         return autor;
     }
 
-    public void setAutor(String autor) {
+    public void setAutor(Autor autor) {
         this.autor = autor;
     }
 
