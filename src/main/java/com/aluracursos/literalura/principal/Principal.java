@@ -7,6 +7,7 @@ import com.aluracursos.literalura.repository.LibroRepository;
 import com.aluracursos.literalura.service.ConsumoAPI;
 import com.aluracursos.literalura.service.ConvierteDatos;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Principal {
@@ -73,7 +74,12 @@ public class Principal {
     }
 
     private void listarLibrosRegistrados() {
-
+        List<Libro> libros = repository.findAll();
+        if (libros.isEmpty()) {
+            System.out.println("No hay libros registrados.");
+        } else {
+            libros.forEach(System.out::println);
+        }
     }
 
     private void listarAutoresRegistrados() {
@@ -85,6 +91,20 @@ public class Principal {
     }
 
     private void listarLibrosPorIdioma() {
+        System.out.println("""
+                Ingrese el idioma para buscar los libros:
+                es - español
+                en - inglés
+                fr - francés
+                pt - portugués
+                """);
+        var idioma = lectura.nextLine();
+        List<Libro> librosPorIdioma = repository.findByIdioma(idioma);
 
+        if (librosPorIdioma.isEmpty()) {
+            System.out.println("No se encontraron libros en ese idioma en la base de datos.");
+        } else {
+            librosPorIdioma.forEach(System.out::println);
+        }
     }
 }
