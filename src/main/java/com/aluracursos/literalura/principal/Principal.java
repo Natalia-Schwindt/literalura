@@ -1,6 +1,9 @@
 package com.aluracursos.literalura.principal;
 
 import com.aluracursos.literalura.model.Datos;
+import com.aluracursos.literalura.model.DatosLibro;
+import com.aluracursos.literalura.model.Libro;
+import com.aluracursos.literalura.repository.LibroRepository;
 import com.aluracursos.literalura.service.ConsumoAPI;
 import com.aluracursos.literalura.service.ConvierteDatos;
 
@@ -10,6 +13,11 @@ public class Principal {
     private final Scanner lectura = new Scanner(System.in);
     private final ConsumoAPI consumoApi = new ConsumoAPI();
     private final ConvierteDatos conversor = new ConvierteDatos();
+    private final LibroRepository repository;
+
+    public Principal(LibroRepository repository) {
+        this.repository = repository;
+    }
 
     public void muestraElMenu() {
         var opcion = -1;
@@ -54,11 +62,29 @@ public class Principal {
 
     private void buscarLibroPorTitulo() {
         Datos datos = getDatosLibro();
-        System.out.println(datos);
+        if (!datos.resultados().isEmpty()) {
+            DatosLibro primerLibro = datos.resultados().get(0);
+            Libro libro = new Libro(primerLibro);
+            repository.save(libro);
+            System.out.println(libro);
+        } else {
+            System.out.println("Libro no encontrado");
+        }
     }
 
-    private void listarLibrosRegistrados() {}
-    private void listarAutoresRegistrados() {}
-    private void listarAutoresVivosPorFecha() {}
-    private void listarLibrosPorIdioma() {}
+    private void listarLibrosRegistrados() {
+
+    }
+
+    private void listarAutoresRegistrados() {
+
+    }
+
+    private void listarAutoresVivosPorFecha() {
+
+    }
+
+    private void listarLibrosPorIdioma() {
+
+    }
 }
