@@ -36,6 +36,9 @@ public class Principal {
                     4 - Listar autores vivos en un determinado año
                     5 - Listar libros por idioma
                     6 - Generar estadísticas de descargas
+                    7 - Top 10 libros más descargados
+                    8 - Buscar autor por nombre
+                    9 - Buscar autores por año de nacimiento
                     
                     0 - Salir
                     """;
@@ -55,6 +58,9 @@ public class Principal {
                 case 4 -> listarAutoresVivosPorFecha();
                 case 5 -> listarLibrosPorIdioma();
                 case 6 -> mostrarEstadisticasDeDescargas();
+                case 7 -> listarTop10Libros();
+                case 8 -> buscarAutorPorNombre();
+                case 9 -> buscarAutoresPorFechaNacimiento();
                 case 0 -> System.out.println("Cerrando la aplicación...");
                 default -> System.out.println("Opción no válida");
             }
@@ -138,6 +144,7 @@ public class Principal {
                 en - inglés
                 fr - francés
                 pt - portugués
+                ru - ruso
                 """);
         var idioma = lectura.nextLine();
 
@@ -169,5 +176,38 @@ public class Principal {
         System.out.println("Mínima cantidad de descargas: " + est.getMin());
         System.out.println("Cantidad de libros evaluados: " + est.getCount());
         System.out.println("-----------------------------------------------");
+    }
+
+    private void buscarAutorPorNombre() {
+        System.out.println("Ingrese el nombre del autor que desea buscar:");
+        var nombre = lectura.nextLine();
+        Optional<Autor> autor = autorRepository.findByNombreContainsIgnoreCase(nombre);
+        if (autor.isPresent()) {
+            System.out.println(autor.get());
+        } else {
+            System.out.println("Autor no encontrado en la base de datos.");
+        }
+    }
+
+    private void listarTop10Libros() {
+        List<Libro> topLibros = repository.findTop10ByOrderByNumeroDeDescargasDesc();
+        System.out.println("---------- TOP 10 LIBROS MÁS DESCARGADOS ----------");
+        topLibros.forEach(l ->
+                System.out.println("Libro: " + l.getTitulo() + " | Descargas: " + l.getNumeroDeDescargas()));
+    }
+
+    private void buscarAutoresPorFechaNacimiento() {
+        System.out.println("Ingrese el año de nacimiento para buscar autores:");
+        try {
+            var fecha = Integer.parseInt(lectura.nextLine());
+            List<Autor> autores = autorRepository.findByFechaDeNacimiento(fecha);
+            if (autores.isEmpty()) {
+                System.out.println("No se encontraron autores que nacieran en el año " + fecha);
+            } else {
+                autores.forEach(System.out::println);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Fecha inválida.");
+        }
     }
 }
