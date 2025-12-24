@@ -6,12 +6,12 @@ import com.aluracursos.literalura.service.ConvierteDatos;
 
 public class Principal {
     private final ConsumoAPI consumoApi = new ConsumoAPI();
+    private final ConvierteDatos conversor = new ConvierteDatos();
 
     public void muestraElMenu() {
         String URL_BASE = "https://gutendex.com/books/";
+
         var json = consumoApi.obtenerDatos(URL_BASE);
-        System.out.println(json);
-        ConvierteDatos conversor = new ConvierteDatos();
         var datos = conversor.obtenerDatos(json, Datos.class);
         System.out.println(datos);
     }
