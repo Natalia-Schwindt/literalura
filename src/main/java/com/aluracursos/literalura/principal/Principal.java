@@ -8,6 +8,7 @@ import com.aluracursos.literalura.service.ConsumoAPI;
 import com.aluracursos.literalura.service.ConvierteDatos;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Principal {
@@ -65,9 +66,16 @@ public class Principal {
         Datos datos = getDatosLibro();
         if (!datos.resultados().isEmpty()) {
             DatosLibro primerLibro = datos.resultados().get(0);
-            Libro libro = new Libro(primerLibro);
-            repository.save(libro);
-            System.out.println(libro);
+
+            Optional<Libro> libroExistente = repository.findByTituloContainsIgnoreCase(primerLibro.titulo());
+
+            if (libroExistente.isPresent()) {
+                System.out.println("Este libro ya se encuentra registrado.");
+            } else {
+                Libro libro = new Libro(primerLibro);
+                repository.save(libro);
+                System.out.println(libro);
+            }
         } else {
             System.out.println("Libro no encontrado");
         }
