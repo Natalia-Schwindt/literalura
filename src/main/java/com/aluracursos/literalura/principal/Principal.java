@@ -1,8 +1,10 @@
 package com.aluracursos.literalura.principal;
 
+import com.aluracursos.literalura.model.Autor;
 import com.aluracursos.literalura.model.Datos;
 import com.aluracursos.literalura.model.DatosLibro;
 import com.aluracursos.literalura.model.Libro;
+import com.aluracursos.literalura.repository.AutorRepository;
 import com.aluracursos.literalura.repository.LibroRepository;
 import com.aluracursos.literalura.service.ConsumoAPI;
 import com.aluracursos.literalura.service.ConvierteDatos;
@@ -16,9 +18,11 @@ public class Principal {
     private final ConsumoAPI consumoApi = new ConsumoAPI();
     private final ConvierteDatos conversor = new ConvierteDatos();
     private final LibroRepository repository;
+    private final AutorRepository autorRepository;
 
-    public Principal(LibroRepository repository) {
+    public Principal(LibroRepository repository, AutorRepository autorRepository) {
         this.repository = repository;
+        this.autorRepository = autorRepository;
     }
 
     public void muestraElMenu() {
@@ -72,7 +76,13 @@ public class Principal {
             if (libroExistente.isPresent()) {
                 System.out.println("Este libro ya se encuentra registrado.");
             } else {
-                Libro libro = new Libro(primerLibro);
+                var datosAutor = primerLibro.autor().get(0);
+                Autor autor = autorRepository.findByNombreIgnoreCase(datosAutor.nombre())
+                        .orElseGet(() -> {
+                            Autor nuevoAutor = new Autor(datosAutor);
+                            return autorRepository.save(nuevoAutor);
+                        });
+                Libro libro = new Libro(primerLibro, autor);
                 repository.save(libro);
                 System.out.println(libro);
             }
@@ -91,11 +101,24 @@ public class Principal {
     }
 
     private void listarAutoresRegistrados() {
-
+        List<Autor> autores = autorRepository.findAll();
+        autores.forEach(System.out::println);
     }
 
     private void listarAutoresVivosPorFecha() {
+        System.out.println("Ingrese el año que desea consultar:");
+        try {
+            var fecha = Integer.parseInt(lectura.nextLine());
+            List<Autor> autoresVivos = autorRepository.buscarAutoresVivosEnDeterminadaFecha(fecha);
 
+            if (autoresVivos.isEmpty()) {
+                System.out.println("No se encontraron autores vivos en ese año.");
+            } else {
+                autoresVivos.forEach(System.out::println);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Año no válido.");
+        }
     }
 
     private void listarLibrosPorIdioma() {
