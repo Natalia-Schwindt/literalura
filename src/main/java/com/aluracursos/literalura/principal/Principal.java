@@ -83,7 +83,9 @@ public class Principal {
             Optional<Libro> libroExistente = repository.findByTituloContainsIgnoreCase(primerLibro.titulo());
 
             if (libroExistente.isPresent()) {
-                System.out.println("Este libro ya se encuentra registrado.");
+                System.out.println("\n[INFO] El libro ya forma parte de tu colección local:");
+                System.out.println(libroExistente.get());
+                System.out.println("--------------------------------------------------\n");
             } else {
                 var datosAutor = primerLibro.autor().get(0);
                 Autor autor = autorRepository.findByNombreIgnoreCase(datosAutor.nombre())
